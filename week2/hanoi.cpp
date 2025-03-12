@@ -1,5 +1,4 @@
 #include <iostream>
-#include <cstdlib>
 
 int hanoi(int n, int a=1, int b=2, int c=3) {
     if (n == 0) {
