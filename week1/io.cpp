@@ -15,7 +15,7 @@ vector<string> split(string str, char delimiter){
 	return internal;
 }
 
-int main(int argc, char** argv){
+int main(int argc, char* argv[]){
 	string line;
 	ifstream file(argv[1]);
 	vector<string> lines;
