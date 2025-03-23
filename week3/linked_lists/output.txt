@@ -1,10 +1,12 @@
-10003 Mike 
-10000 Alice 10003 Mike 
-10000 Alice 10003 Mike 10010 Tom 
+221 NY 
+201 YH 221 NY 
+201 YH 221 NY 231 HW 
 Addition failed
+221 NY
 Search failed
-10000 Alice
-10000 Alice 10003 Mike 10010 Tom 10103 Sam 
-10000 Alice 10010 Tom 10103 Sam 
+201 YH 211 SKC 221 NY 231 HW 
+201 YH 221 NY 231 HW 
+201 YH 221 NY 
 Deletion failed
-10000 Alice 10010 Tom 10103 Sam 10112 Lily 
+201 YH 211 DH 221 NY 
+Addition failed
