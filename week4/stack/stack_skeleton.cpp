@@ -11,43 +11,61 @@ const char BALANCE = 'B';
 
 // Return true if str is a palindrome; false otherwise
 bool isPalindrome(string& str) {
-  stack<char> s;
+  /*
+  input: string
+  output: bool (if palindrome)
+  description: push in stack and match with the top
+  time complexity: O(n)
+  */
 
-  for (int i = 0; i < str.length(); i++) {
-    s.push(str[i]);
+  stack<char> s;  // stack to store char of str
+
+  for (int i = 0; i < str.length(); i++) {  // time complexity: O(n)
+    s.push(str[i]); // time complexity: O(1)
   }
 
-  for (int i = 0; i < str.length(); i++) {
+  for (int i = 0; i < str.length(); i++) {  // time complexity: O(n)
     if (s.top() != str[i]) return false;
-    s.pop();
+    s.pop();  // time complexity: O(1)
   }
   return true;
 }
 
 // Return true if brackets are balanced in str; false otherwise
 bool balance(string& str) {
-  stack<char> s;
-  for (int i = 0; i < str.length(); i++) {
+  /*
+  input: string with brackets
+  output: bool (if bracket is balanced)
+  description: push brackets in stack and match with the top
+  time complexity: O(n)
+  */
+
+  stack<char> s;  // stack to store brackets
+
+  for (int i = 0; i < str.length(); i++) {  // time complexity: O(n)
     if (str[i] == '(' || str[i] == '[' || str[i] == '{'){
-      s.push(str[i]);
+      s.push(str[i]); // time complexity: O(1)
       
     }
     else if (str[i] == ')' || str[i] == ']' || str[i] == '}') {
       if (s.empty()) return false;
+
+      // if top and current match, pop
       if (str[i] == ')' && s.top() == '(') {
-        s.pop();
+        s.pop();  // time complexity: O(1)
       }
       else if (str[i] == ']' && s.top() == '[') {
-        s.pop();
+        s.pop();  // time complexity: O(1)
       }
       else if (str[i] == '}' && s.top() == '{') {
-        s.pop();
+        s.pop();  // time complexity: O(1)
       }
       else {
         return false;
       }
     }
   }
+  // if no open bracket left, return true
   if (s.empty()) {
     return true;
   }
