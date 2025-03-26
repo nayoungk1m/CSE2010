@@ -11,6 +11,7 @@ const char FIND = 'F';
 
 class Student {
 public:
+  // node structure
   int id;
   string name;
   Student* next;
@@ -23,6 +24,7 @@ public:
     head = nullptr;
   }
   ~Course() {
+    // release data
     Student* current = head;
     while (current != nullptr) {
       Student* temp = current;
@@ -45,21 +47,25 @@ bool Course::addStudent(int id, string name) {
   Student* current = head;
   Student* previous = nullptr;
 
+  // find right position to insert
   while (current != nullptr && current->id < id) {
     previous = current;
     current = current->next;
   }
 
+  // check if id already exists
   if (current != nullptr && current->id == id) {
     return false;
   }
 
+  // insert new student
   Student* newStudent = new Student;
   newStudent->id = id;
   newStudent->name = name;
   newStudent->next = current;
 
   if (previous == nullptr) {
+    // insert at head
     head = newStudent;
   }
   else {
@@ -73,14 +79,18 @@ bool Course::deleteStudent(int id) {
 
   Student* current = head;
   Student* previous = nullptr;
+
+  // fine student to delete
   while (current != nullptr && current->id != id) {
     previous = current;
     current = current->next;
   }
 
+  // no student found
   if (current == nullptr) return false;
 
   if (previous == nullptr) {
+    // delete head
     head = current->next;
   }
   else {
@@ -95,7 +105,8 @@ Student* Course::find(int id) {
   while (current != nullptr && current->id != id) {
     current = current->next;
   }
-    return current;
+  // return nullptr if not found
+  return current;
 }
 
 void Course::write(ofstream& outFile) {
