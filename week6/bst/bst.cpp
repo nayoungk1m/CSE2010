@@ -43,18 +43,16 @@ public:
   bool isEmpty() { return (root == nullptr); }
   TreeNode* findMin();
   TreeNode* findMax();
-  TreeNode* search(int, TreeNode*);
+  TreeNode* search(int, TreeNode*);     // Added function's argument : TreeNode* p
   bool insertNode(int);   // Modified function type from skeleton code: void -> bool
   bool deleteNode(int);   // Modified function type from skeleton code: void -> bool
-  void writeInorder(ofstream&);
-  void writePreorder(ofstream&);
-  void writePostorder(ofstream&);
+  void writeInorder(ofstream&, TreeNode*);     // Added function's argument : TreeNode* node
+  void writePreorder(ofstream&, TreeNode*);    // Added function's argument : TreeNode* node
+  void writePostorder(ofstream&, TreeNode*);   // Added function's argument : TreeNode* node
   void printTree();
 private:
   int _getHeight(TreeNode*);
   void _printSpaces(double, TreeNode*);
-  TreeNode* _findPredecessor(TreeNode*);
-  TreeNode* _findSuccessor(TreeNode*);
 };
 
 BinarySearchTree::~BinarySearchTree() {
@@ -136,6 +134,7 @@ TreeNode* BinarySearchTree::findMax() {
 // If the node exists, return the key
 // Otherwise, return nullptr
 // Time complexity: O(h) ~ O(logn), h: height
+/* Added function's argument : TreeNode* p */
 TreeNode* BinarySearchTree::search(int query, TreeNode* p) {
   // TODO. Practice 6
   if (p->key == query) return p;
@@ -172,7 +171,7 @@ TreeNode* BinarySearchTree::search(int query, TreeNode* p) {
 // If node with key k alreay exists in the tree, do nothing
 // Otherwise, insert a new node with key k 
 // Time complexity: O(h) ~ O(logn), h: height
-// Modified function type from skeleton code: void -> bool
+/* Modified function type from skeleton code: void -> bool */
 bool BinarySearchTree::insertNode(int k) {
   // TODO. Practice 7
   TreeNode* p = root;
@@ -208,7 +207,8 @@ bool BinarySearchTree::insertNode(int k) {
 
 // If deletion fails, immediately terminate the program
 // Otherwise, delete the node with key k
-// Modified function type from skeleton code: void -> bool
+// Time complexity: O(h) ~ O(logn), h: height
+/* Modified function type from skeleton code: void -> bool */
 bool BinarySearchTree::deleteNode(int k) { 
   // TODO. Practice 7
   TreeNode* parent = nullptr;
@@ -270,6 +270,9 @@ bool BinarySearchTree::deleteNode(int k) {
     if (successor->right != nullptr) {
       successorParent->left = successor->right;
     }
+    else{
+      successorParent->left = nullptr;
+    }
     p->key = successor->key;
     delete successor;
   }
@@ -280,78 +283,41 @@ bool BinarySearchTree::deleteNode(int k) {
 
 // Given an output file stream, write the keys of all the nodes 
 // visited in inorder traversal
-void BinarySearchTree::writeInorder(ofstream& outFile) {
+// Time complexity: O(n)
+/* Added function's argument : TreeNode* node */
+void BinarySearchTree::writeInorder(ofstream& outFile, TreeNode* node) {
   // Practice 6
+  if (isEmpty() || node == nullptr) return;
+
+  writeInorder(outFile, node->left);
+  outFile << node->key << " ";
+  writeInorder(outFile, node->right);
 }
 
 // Given an output file stream, write the keys of all the nodes 
 // visited in preorder traversal
-void BinarySearchTree::writePreorder(ofstream& outFile) {
+// Time complexity: O(n)
+/* Added function's argument : TreeNode* node */
+void BinarySearchTree::writePreorder(ofstream& outFile, TreeNode* node) {
   // Practice 6
+  if (isEmpty() || node == nullptr) return;
+
+  outFile << node->key << " ";
+  writePreorder(outFile, node->left);
+  writePreorder(outFile, node->right);
 }
 
 // Given an output file stream, write the keys of all the nodes 
 // visited in postorder traversal
-void BinarySearchTree::writePostorder(ofstream& outFile) {
+// Time complexity: O(n)
+/* Added function's argument : TreeNode* node */
+void BinarySearchTree::writePostorder(ofstream& outFile, TreeNode* node) {
   // Practice 6
-}
+  if (isEmpty() || node == nullptr) return;
 
-// Search successor node
-TreeNode* BinarySearchTree::_findSuccessor(TreeNode* node) {
-  // right subtree exists
-  if (node->right != nullptr) {
-    // Enter right subtree
-    TreeNode* p = node->right;
-    while (p->left != nullptr) {
-      p = p->left;
-    }
-    return p;
-  }
-
-  // right subtree doesn't exist
-  // find first 
-  TreeNode* successor = nullptr;
-  TreeNode* p = root;
-  while (p != nullptr) {
-    if (node->key < p->key) {
-      successor = p;
-      p = p->left;
-    }
-    else if (node->key > p->key) {
-      p = p->right;
-    }
-    else break;
-  }
-  return successor;
-}
-
-// Search predecessor node
-TreeNode* BinarySearchTree::_findPredecessor(TreeNode* node) {
-  // left subtree exists
-  if (node->left != nullptr) {
-    // Enter left subtree
-    TreeNode* p = node->left;
-    while (p->right != nullptr) {
-      p = p->right;
-    }
-    return p;
-  }
-
-  // left subtree doesn't exists
-  // find first left ancestor
-  TreeNode* predecessor = nullptr;
-  TreeNode* p = root;
-  while (p != nullptr) {
-    if (node->key > p->key) {
-      predecessor = p;
-      p = p->right;
-    }
-    else if (node->key < p->key) {
-      p = p->left;
-    }
-    else break;
-  }
-  return predecessor;
+  writePostorder(outFile, node->left);
+  writePostorder(outFile, node->right);
+  outFile << node->key << " ";
 }
 
 int BinarySearchTree::_getHeight(TreeNode* curr) {
@@ -475,12 +441,18 @@ int main(int argc, char* argv[]) {
         break;
       case INORDER:
         // Practice 6. Call the function for inorder traversal;
+        tree.writeInorder(outFile, tree.root);
+        outFile << endl;
         break;
       case PREORDER:
         // Practice 6. Call the function for preorder traversal;
+        tree.writePreorder(outFile, tree.root);
+        outFile << endl;
         break;
       case POSTORDER:
         // Practice 6. Call the function for postorder traversal;
+        tree.writePostorder(outFile, tree.root);
+        outFile << endl;
         break;
       case INSERT:
         if (!(iss >> k)) {
@@ -502,6 +474,9 @@ int main(int argc, char* argv[]) {
         delete_bool = tree.deleteNode(k);
         if (delete_bool) {
           outFile << "D " << k << endl;
+        }
+        else{
+          exit(1);
         }
         break;
       default:
