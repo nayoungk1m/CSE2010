@@ -1,4 +1,4 @@
-// Practice 5. Binary Search Tree
+// Practices 6&7. Binary Search Tree Operations
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -13,12 +13,23 @@ using namespace std;
 const char BUILD = 'B';
 const char FIND_MIN = 'm';
 const char FIND_MAX = 'M';
+const char SEARCH = 'S';
+const char INSERT = 'I';
+const char DELETE = 'D';
+const char INORDER = 'N';
+const char PREORDER = 'R';
+const char POSTORDER = 'O';
 
 class TreeNode {
 public:
   int key;
-  TreeNode* left;   // left child
-  TreeNode* right;  // right child
+  TreeNode* left;
+  TreeNode* right;
+  TreeNode(int k, TreeNode* l=nullptr, TreeNode* r=nullptr) {
+    key = k;
+    left = l;
+    right = r;
+  }
 };
 
 class BinarySearchTree {
@@ -28,8 +39,16 @@ public:
   ~BinarySearchTree();
 
   TreeNode* arrayToBST(vector<int>&, int, int);
+  // Return true if tree is empty; false otherwise
+  bool isEmpty() { return (root == nullptr); }
   TreeNode* findMin();
   TreeNode* findMax();
+  TreeNode* search(int);
+  void insertNode(int);
+  void deleteNode(int);
+  void writeInorder(ofstream&);
+  void writePreorder(ofstream&);
+  void writePostorder(ofstream&);
   void printTree();
 private:
   int _getHeight(TreeNode*);
@@ -37,50 +56,62 @@ private:
 };
 
 BinarySearchTree::~BinarySearchTree() {
-  root = nullptr;
+  // Practice 5
 }
 
 // Given a sequence arr of integers, start index l, the end index r, 
 // build a binary search (sub)tree that contains keys in arr[l], ..., arr[r].
 // Return the root node of the tree
-// time complexity: O(n)
 TreeNode* BinarySearchTree::arrayToBST(vector<int>& arr, int l, int r) {
-  if (l > r) return nullptr;
-
-  // Time complexity: O(n)
-  // check if the array is sorted
-  for (int i = l; i < r; i++) {
-    if (arr[i] >= arr[i + 1]) return nullptr;
-  }
-
-  int mid = (l + r) / 2;
-  TreeNode* node = new TreeNode();
-  node->key = arr[mid];
-  node->left = arrayToBST(arr, l, mid - 1);
-  node->right = arrayToBST(arr, mid + 1, r);
-  return node;
+  // Practice 5
 }
 
 // Return the node with the minimum value 
-// time complexity: O(h), h: height
 TreeNode* BinarySearchTree::findMin() {
-  TreeNode* curr = root;
-  if (curr == nullptr) return nullptr;
-  while (curr->left != nullptr) {
-    curr = curr->left;
-  }
-  return curr;
+  // Practice 5
 }
 
 // Return the node with the maximum value 
-// time complexity: O(h), h: height
 TreeNode* BinarySearchTree::findMax() {
-  TreeNode* curr = root;
-  if (curr == nullptr) return nullptr;
-  while (curr->right != nullptr) {
-    curr = curr->right;
-  }
-  return curr;
+  // Practice 5
+
+}
+
+// Given a query, search for the node whose key is equal to query.
+// If the node exists, return the key
+// Otherwise, return nullptr
+TreeNode* BinarySearchTree::search(int query) {
+  // TODO. Practice 6
+}
+
+// If node with key k alreay exists in the tree, do nothing
+// Otherwise, insert a new node with key k 
+void BinarySearchTree::insertNode(int k) {
+  // TODO. Practice 7
+}
+
+// If deletion fails, immediately terminate the program
+// Otherwise, delete the node with key k
+void BinarySearchTree::deleteNode(int k) { 
+  // TODO. Practice 7
+}
+
+// Given an output file stream, write the keys of all the nodes 
+// visited in inorder traversal
+void BinarySearchTree::writeInorder(ofstream& outFile) {
+  // Practice 6
+}
+
+// Given an output file stream, write the keys of all the nodes 
+// visited in preorder traversal
+void BinarySearchTree::writePreorder(ofstream& outFile) {
+  // Practice 6
+}
+
+// Given an output file stream, write the keys of all the nodes 
+// visited in postorder traversal
+void BinarySearchTree::writePostorder(ofstream& outFile) {
+  // Practice 6
 }
 
 int BinarySearchTree::_getHeight(TreeNode* curr) {
@@ -182,6 +213,36 @@ int main(int argc, char* argv[]) {
         else {
           outFile<<found->key<<endl;
         }
+        break;
+      case SEARCH:
+        if (!(iss >> k)) {
+          cerr<<"SEARCH: invalid input"<<endl;
+          exit(1);
+        }
+        // Practice 6. Call the function for search
+        break;
+      case INORDER:
+        // Practice 6. Call the function for inorder traversal;
+        break;
+      case PREORDER:
+        // Practice 6. Call the function for preorder traversal;
+        break;
+      case POSTORDER:
+        // Practice 6. Call the function for postorder traversal;
+        break;
+      case INSERT:
+        if (!(iss >> k)) {
+          cerr<<"INSERT: invalid input"<<endl;
+          exit(1);
+        }
+        // TODO. Practice 7. Call the function for insertion
+        break;
+      case DELETE:
+        if (!(iss >> k)) {
+          cerr<<"DELETE: invalid input"<<endl;
+          exit(1);
+        }
+        // TODO. Practice 7. Call the function for deletion
         break;
       default:
         cerr<<"Undefined operator"<<endl;

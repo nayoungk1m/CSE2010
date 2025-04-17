@@ -43,21 +43,22 @@ bool balance(string& str) {
   stack<char> s;  // stack to store brackets
 
   for (int i = 0; i < str.length(); i++) {  // time complexity: O(n)
-    if (str[i] == '(' || str[i] == '[' || str[i] == '{'){
-      s.push(str[i]); // time complexity: O(1)
+    char ch = str[i];
+    if (ch == '(' || ch == '[' || ch == '{'){
+      s.push(ch); // time complexity: O(1)
       
     }
-    else if (str[i] == ')' || str[i] == ']' || str[i] == '}') {
+    else if (ch == ')' || ch == ']' || ch == '}') {
       if (s.empty()) return false;
 
       // if top and current match, pop
-      if (str[i] == ')' && s.top() == '(') {
+      if (ch == ')' && s.top() == '(') {
         s.pop();  // time complexity: O(1)
       }
-      else if (str[i] == ']' && s.top() == '[') {
+      else if (ch == ']' && s.top() == '[') {
         s.pop();  // time complexity: O(1)
       }
-      else if (str[i] == '}' && s.top() == '{') {
+      else if (ch == '}' && s.top() == '{') {
         s.pop();  // time complexity: O(1)
       }
       else {
@@ -65,13 +66,16 @@ bool balance(string& str) {
       }
     }
   }
+  
   // if no open bracket left, return true
-  if (s.empty()) {
-    return true;
-  }
-  else {
-    return false;
-  }
+  // if (s.empty()) {
+  //   return true;
+  // }
+  // else {
+  //   return false;
+  // }
+
+  return s.empty();
 }
 
 
