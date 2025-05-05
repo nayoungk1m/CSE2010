@@ -200,8 +200,8 @@ bool BinarySearchTree::insertNode(int k) {
   else {    // k < parent->key
     parent->left = node;
   }
-  cout << "INSERT: successfully insert " << k << endl;
-  printTree();
+  // cout << "INSERT: successfully insert " << k << endl;
+  // printTree();
   return true;
 }
 
@@ -266,7 +266,7 @@ bool BinarySearchTree::deleteNode(int k) {
       successorParent = successor;
       successor = successor->left;
     }
-    cout << "Successor: " << successor->key << " SuccessorParent: " << successorParent->key << endl;
+    // cout << "Successor: " << successor->key << " SuccessorParent: " << successorParent->key << endl;
     if (successor->right != nullptr) {
       successorParent->left = successor->right;
     }
@@ -276,8 +276,8 @@ bool BinarySearchTree::deleteNode(int k) {
     p->key = successor->key;
     delete successor;
   }
-  cout << "DELETE: successfully delete " << k << endl;
-  printTree();
+  // cout << "DELETE: successfully delete " << k << endl;
+  // printTree();
   return true;
 }
 
