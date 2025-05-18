@@ -24,16 +24,17 @@ const char SHORTEST_PATH = 'S';
 class Graph {
 private:
   int nVertices;
-  vector<vector<pair<int, int>>> adjList;
+  vector<vector<pair<int, int>>> adjList;   // (nVertices, (edge, weight))
 
 public:
-// TODO. Define a constructor, a destructor, and proper methods
   Graph(){
     nVertices = 0;
   } ~Graph() = default;
   void construct(vector<tuple<int, int, int>>&, int, int);
   bool isAdjacent(int, int);
   vector<int> getNeighbors(int);
+  void topologicalSort(ofstream&);
+  void shortestPath(int, int, ofstream&);
 };
 
 void Graph::construct(vector<tuple<int, int, int>> &data, int nV, int nE) {
@@ -55,7 +56,7 @@ void Graph::construct(vector<tuple<int, int, int>> &data, int nV, int nE) {
     }
     adjList[u].emplace_back(v, wgt);
   }
-
+  
   for (int u = 0; u < nVertices; ++u) {
     cout << u << ":";
     for (const auto& [v, wgt] : adjList[u]) {
@@ -84,6 +85,16 @@ vector<int> Graph::getNeighbors(int u) {
   return neighbors;
 }
 
+void topologicalSort(ofstream& outFile) {
+  // TODO
+  return;
+}
+
+void shortestPath(int u, int v, ofstream& outFile) {
+  // TODO
+  return;
+}
+
 int main(int argc, char* argv[]) {
   if (argc != 3) {
     cerr<<"Correct usage: [exe] [input] [output]"<<endl;
@@ -108,7 +119,7 @@ int main(int argc, char* argv[]) {
           cerr<<"CONSTRUCT: invalid input"<<endl;
           exit(1);
         }
-        // TODO. Construct a graph
+        // Construct a graph
         for (int i = 0; i < nEdges; ++i) {
           if (!getline(inFile, line)) {
             cerr << "CONSTRUCT: not enough edge data" << endl;
@@ -128,7 +139,7 @@ int main(int argc, char* argv[]) {
           cerr<<"isAdjacent: invalid input"<<endl;
           exit(1);
         }
-        // TODO. Check if edge (u, v) exists in the graph
+        // Check if edge (u, v) exists in the graph
         ad = g.isAdjacent(u, v);
         if (ad == true) {
           outFile << u << " " << v << " " << "T" << endl;
@@ -141,12 +152,24 @@ int main(int argc, char* argv[]) {
           cerr<<"getNeighbors: invalid input"<<endl;
           exit(1);
         }
-        // TODO. Get all the neighbors of u
+        // Get all the neighbors of u
         nbrs = g.getNeighbors(u);
         for (auto& n : nbrs) {
           outFile << n << " ";
         }
         outFile << endl;
+        break;
+      case TOPOLOGICAL_SORT:
+        // TODO: Topological Sort
+        g.topologicalSort(outFile);
+        break;
+      case SHORTEST_PATH:
+        if (!iss >> u >> v){
+          cerr<<"shortestPath: invalid input"<<endl;
+          exit(1);
+        }
+        // TODO: Shortest Path
+        g.shortestPath(u, v, outFile);
         break;
       default:
         cerr<<"Undefined operator"<<endl;
