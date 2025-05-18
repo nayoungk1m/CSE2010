@@ -33,8 +33,8 @@ public:
   void construct(vector<tuple<int, int, int>>&, int, int);
   bool isAdjacent(int, int);
   vector<int> getNeighbors(int);
-  void topologicalSort(ofstream&);
-  void shortestPath(int, int, ofstream&);
+  vector<int> topologicalSort();
+  vector<int> shortestPath(int, int);
 };
 
 void Graph::construct(vector<tuple<int, int, int>> &data, int nV, int nE) {
@@ -85,14 +85,84 @@ vector<int> Graph::getNeighbors(int u) {
   return neighbors;
 }
 
-void topologicalSort(ofstream& outFile) {
+vector<int> Graph::topologicalSort() {
   // TODO
-  return;
+  vector<int> t;  
+  queue<int> q;
+
+  vector<int> inDegree(nVertices, 0);
+  for (int u = 0; u < nVertices; u++) {
+    for (const auto& [v, _] : adjList[u]){
+      inDegree[v]++;
+    }
+  }
+
+  for (int v = 0; v < nVertices; v++) {
+    if (inDegree[v] == 0) {
+      q.push(v);
+    }
+  }
+
+  while (!q.empty()) {
+    int u = q.front();
+    q.pop();
+
+    t.push_back(u);
+
+    for (const auto& [v, _] : adjList[u]) {
+      inDegree[v]--;
+
+      if (inDegree[v] == 0) {
+        q.push(v);
+      }
+    }
+  }
+
+  // if cycle exists
+  if (t.size() != nVertices) {
+    cerr << "Topological Sort: Cycle detected" << endl;
+    return {};
+  }
+
+  return t;
 }
 
-void shortestPath(int u, int v, ofstream& outFile) {
+vector<int> Graph::shortestPath(int source, int target) {
   // TODO
-  return;
+  vector<int> D(nVertices, INT_MAX);    // Distance
+  vector<int> P(nVertices, -1);         // previous
+  vector<bool> visited(nVertices, false);
+
+  priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+  pq.push({0, source});
+  D[source] = 0;
+  
+  while (!pq.empty()) {
+    int cur_node = pq.top().second;
+    pq.pop();
+
+    if (visited[cur_node]) continue;
+    visited[cur_node] = true;
+
+    if (cur_node == target) break;
+
+    for (const auto& [v, wgt] : adjList[cur_node]){
+      if (!visited[v] && D[cur_node] + wgt < D[v]) {
+        D[v] = D[cur_node] + wgt; 
+        P[v] = cur_node;
+        pq.push({D[v], v});
+      }
+    }
+  }
+
+  vector<int> path;
+  if (D[target] == INT_MAX) return path;
+
+  for (int v = target; v != -1; v = P[v]) {
+    path.push_back(v);
+  }
+  reverse(path.begin(), path.end());
+  return path;
 }
 
 int main(int argc, char* argv[]) {
@@ -108,9 +178,9 @@ int main(int argc, char* argv[]) {
   {
     char op = line[0];
     istringstream iss(line.substr(1));
-    int u, v, wgt, nVertices, nEdges, cnt;
+    int u, v, wgt, nVertices, nEdges, cnt, s, t;
     vector<tuple<int, int, int>> data;
-    vector<int> p, nbrs;
+    vector<int> p, nbrs, ts, path;
     bool ad;
     switch(op)
     {
@@ -161,15 +231,25 @@ int main(int argc, char* argv[]) {
         break;
       case TOPOLOGICAL_SORT:
         // TODO: Topological Sort
-        g.topologicalSort(outFile);
+        ts = g.topologicalSort();
+        for (auto& t : ts) {
+          outFile << t << " ";
+        }
+        outFile << endl;
         break;
       case SHORTEST_PATH:
-        if (!iss >> u >> v){
+        if (!(iss >> s >> t)){
           cerr<<"shortestPath: invalid input"<<endl;
           exit(1);
         }
         // TODO: Shortest Path
-        g.shortestPath(u, v, outFile);
+        path = g.shortestPath(s, t);
+        for (int i = 0; i < path.size(); i++){
+          outFile << path[i];
+          if (i != path.size() - 1) {
+            outFile << " ";
+          }
+        }
         break;
       default:
         cerr<<"Undefined operator"<<endl;
