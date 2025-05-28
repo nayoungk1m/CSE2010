@@ -134,7 +134,7 @@ vector<int> Graph::shortestPath(int source, int target) {
   vector<bool> visited(nVertices, false);
 
   priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
-  pq.push({0, source});
+  pq.push({0, source});   // distance, node
   D[source] = 0;
   
   while (!pq.empty()) {

@@ -19,3 +19,4 @@ prof: Hyunjoon Kim
     - week9: Priority Quese and Heaps
     - week10: Graph Representation
     - week11: Topological Sort and Dijkstra's Algorithm
+    - week12: Binary Search
