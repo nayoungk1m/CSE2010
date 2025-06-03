@@ -21,3 +21,4 @@ prof: Hyunjoon Kim
     - week11: Topological Sort and Dijkstra's Algorithm
     - week12: Binary Search
     - week13: Sorting (merge sort & quicksort)
+    - week14: Use Hash Tables
