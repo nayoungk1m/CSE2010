@@ -24,7 +24,7 @@ const char SHORTEST_PATH = 'S';
 class Graph {
 private:
   int nVertices;
-  vector<vector<pair<int, int>>> adjList;   // (nVertices, (edge, weight))
+  vector<vector<pair<int, int>>> adjList;   // nVertices * {(edge, weight), (edge, weight), ... }
 
 public:
   Graph(){
@@ -54,9 +54,11 @@ void Graph::construct(vector<tuple<int, int, int>> &data, int nV, int nE) {
       cerr << "CONSTRUCT: Invalid vertex value" << endl;
       exit(1);
     }
-    adjList[u].emplace_back(v, wgt);
+    adjList[u].emplace_back(v, wgt);  /* emplace_back 사용 시 벡터 내부에서 바로 객체 생성
+                                      BUT! push_back 에서는 백터에 넣기전에 일일이 생성해줘야 됨 */
   }
   
+  // print adjacent lists
   for (int u = 0; u < nVertices; ++u) {
     cout << u << ":";
     for (const auto& [v, wgt] : adjList[u]) {
@@ -129,13 +131,13 @@ vector<int> Graph::topologicalSort() {
 
 vector<int> Graph::shortestPath(int source, int target) {
   // TODO
-  vector<int> D(nVertices, INT_MAX);    // Distance
-  vector<int> P(nVertices, -1);         // previous
+  vector<int> distance(nVertices, INT_MAX);    // distance
+  vector<int> predecessor(nVertices, -1);         // predecessor
   vector<bool> visited(nVertices, false);
 
   priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
   pq.push({0, source});   // distance, node
-  D[source] = 0;
+  distance[source] = 0;
   
   while (!pq.empty()) {
     int cur_node = pq.top().second;
@@ -147,18 +149,18 @@ vector<int> Graph::shortestPath(int source, int target) {
     if (cur_node == target) break;
 
     for (const auto& [v, wgt] : adjList[cur_node]){
-      if (!visited[v] && D[cur_node] + wgt < D[v]) {
-        D[v] = D[cur_node] + wgt; 
-        P[v] = cur_node;
-        pq.push({D[v], v});
+      if (!visited[v] && distance[cur_node] + wgt < distance[v]) {
+        distance[v] = distance[cur_node] + wgt; 
+        predecessor[v] = cur_node;
+        pq.push({distance[v], v});
       }
     }
   }
 
   vector<int> path;
-  if (D[target] == INT_MAX) return path;
+  if (distance[target] == INT_MAX) return path;
 
-  for (int v = target; v != -1; v = P[v]) {
+  for (int v = target; v != -1; v = predecessor[v]) {
     path.push_back(v);
   }
   reverse(path.begin(), path.end());

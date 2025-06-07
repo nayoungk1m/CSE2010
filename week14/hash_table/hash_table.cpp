@@ -24,6 +24,33 @@ vector<int> readIntegers(int k, string& line) {
   return arr;
 }
 
+bool twoSum(int k, vector<int> arr) {
+  unordered_map<int, int> seen;
+  for (int num : arr){
+    int diff = k - num;
+    if (seen.find(diff) != seen.end()){   // if diff already exists
+      return true;
+    }
+    seen[num] = 1;    // insert "num"
+  }
+  return false;
+}
+
+vector<pair<int, int>> symmetricPairs(vector<pair<int, int>> pairs) {
+  unordered_map<int, int> map;
+  vector<pair<int, int>> result;
+
+  for (auto p : pairs) {
+    int a = p.first, b = p.second;
+    if (map.find(b) != map.end() && map[b] == a){
+      result.push_back(p);
+    }
+    map[a] = b;
+  }
+  
+  return result;
+}
+
 int main(int argc, char* argv[]) {
   if (argc != 3) {
     cerr<<"Correct usage: [program] [input] [output]"<<endl;
@@ -57,6 +84,13 @@ int main(int argc, char* argv[]) {
         // TODO 
         // Take k and nums as input, and run twoSum(k, nums)
         // Write whether two sum exists into output file
+        exist = twoSum(k, nums);
+        if (exist) {
+          outFile << "T" << endl;
+        }
+        else {
+          outFile << "F" << endl;
+        }
         break;
       case SYMMETRIC_PAIRS:
         if (!(iss >> n)) {
@@ -78,6 +112,10 @@ int main(int argc, char* argv[]) {
         // TODO
         // Take pairs as input, and run symmetricPairs(pairs)
         // Write every symmetric pair into output file
+        ans = symmetricPairs(pairs);
+        for (it = ans.begin(); it != ans.end(); ++it) {
+          outFile << it->first << " " << it->second << endl;
+        }
         break;
       default:
         cerr<<"Undefined operator"<<endl;
