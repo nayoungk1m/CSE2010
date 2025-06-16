@@ -11,7 +11,7 @@
 #include <stack> // DFS
 #include <tuple>
 #include <vector>
-#include <min_heap.hpp>
+#include "min_heap.hpp"
 using namespace std;
 const char CONSTRUCT = 'C';
 const char IS_ADJACENT = 'I';
@@ -36,7 +36,7 @@ public:
   ~Graph();
   void printGraph();
   void build(int, int, vector<tuple<int, int, int>>&);
-  bool idAdjacent(int, int);
+  bool isAdjacent(int, int);
   vector<int> getNeighbors(int);
   vector<int> breadthFirstSearch(int);
   vector<int> depthFirstSearch(int);
@@ -45,8 +45,8 @@ public:
   bool topologicalSort(vector<int>&);
 };
 
-Graph()::~Graph() {
-  if (neighbor != nullptr) {
+Graph::~Graph() {
+  if (neighbors != nullptr) {
     for (int i = 0; i < nVertices; i++) {
       if (neighbors[i] != nullptr)
         delete neighbors[i];
@@ -115,23 +115,61 @@ vector<int> Graph::getNeighbors(int u) {
   return nbrs;
 }
 
+vector<int> Graph::depthFirstSearch(int s) {
+  vector<bool> visited(nVertices, false);
+  stack<int> st;
+  vector<int> result;
+  
+  st.push(s);
+  while (!st.empty()) {
+    int u = st.top();
+    st.pop();
+
+    if (!visited[u]) {
+      result.push_back(u);
+      cout << "visit " << u << " " << endl;
+      visited[u] = true;
+
+      vector<int> nbrs = getNeighbors(u);
+      for (const int v : nbrs) {
+        if (!visited[v]) {
+        st.push(v);
+        }
+      }
+    }
+  }
+  return result;
+}
+
 bool Graph::topologicalSort(vector<int>& out) {
   out.clear();
   queue<int> q;
   int cnt = 0;
+  
+  // in-degree 계산
+  // Time complexity: O(|V| + |E|)
   int* inCnt = new int[nVertices]();
   for (int u = 0; u < nVertices; ++u) {
-    if (!inCnt[u])
+    for (int i = 0; i < nNeighbors[u]; ++i) {
+      ++inCnt[neighbors[u][i].first];
+    }
+  }
+
+  for (int u = 0; u < nVertices; ++u) {
+    if (inCnt[u] == 0)
       q.push(u);
   }
-  while (!q.empth()) {
+  // while loop iterates |V| times
+  // (1 + indegree(v)) * every vertex v
+  // Time complexity: O(|V| + |E|)
+  while (!q.empty()) {
     int u = q.front();
     q.pop();
     out.push_back(u);
     for (int i = 0; i < nNeighbors[u]; ++i) {
       int v = neighbors[u][i].first;
       --inCnt[v];
-      if (!inCnt[v])
+      if (inCnt[v] == 0)
         q.push(v);
     }
     ++cnt;
@@ -148,16 +186,16 @@ bool Graph::runDijstra(int s, int t, vector<int>& output) {
   distance[s] = 0;
   
   // Build min priority queue Q with keys of distance[v] for all v
-  MinHeap heap(nVertices);
-  heap.build(distance, nVertices);
-  while (!heap.isEmpty()) {
-    int u = heap.deleteMinimum();
+  MinHeap pq(nVertices);
+  pq.build(distance, nVertices);
+  while (!pq.isEmpty()) {
+    int u = pq.deleteMinimum();
     int v, wgt;
     for (int i = 0; i < nNeighbors[u]; ++i) {
       tie(v, wgt) = neighbors[u][i];
       if (distance[u] < (INT_MAX - wgt) && distance[u] + wgt < distance[u]) {
         distance[v] = distance[u] + wgt;
-        heap.decreaseKey(v, distance[v]);
+        pq.decreaseKey(v, distance[v]);
         predecessor[v] = u;
       }
     }
@@ -201,6 +239,19 @@ int main(int argc, char* argv[]) {
           exit(1);
         }
         // TODO. Construct a graph
+        for (int i = 0; i < nEdges; ++i) {
+          if (!getline(inFile, line)) {
+            cerr << "CONSTRUCT: not enough edge data" << endl;
+            exit(1);
+          }
+          istringstream edgeStream(line);
+          if (!(edgeStream >> u >> v >> wgt)) {
+            cerr << "CONSTRUCT: invalid edge format" << endl;
+            exit(1);
+          }
+          data.emplace_back(u, v, wgt);
+        }
+        g.build(nVertices, nEdges, data);
         break;
       case IS_ADJACENT:
         if (!(iss >> u >> v)) {
@@ -216,6 +267,8 @@ int main(int argc, char* argv[]) {
         }
         // TODO. Get all the neighbors of u
         break;
+      case DFS:
+        g.depthFirstSearch(0);
       default:
         cerr<<"Undefined operator"<<endl;
         exit(1);

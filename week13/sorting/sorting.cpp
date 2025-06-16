@@ -19,9 +19,14 @@ vector<int> mergeSort(const vector<int>& arr) {
   left = mergeSort(left);
   right = mergeSort(right);
 
+  vector<int> result = merge(left, right);
+  return result;
+}
+
+vector<int> merge(const vector<int>& left, const vector<int>& right) {
   vector<int> result;
   int i = 0, j = 0;
-  
+
   while (i < left.size() && j < right.size()) {
     if (left[i] > right[j]) {
       result.push_back(left[i]);
@@ -31,18 +36,49 @@ vector<int> mergeSort(const vector<int>& arr) {
       j++;
     }
   }
-  
+
   while (i < left.size()) {
     result.push_back(left[i]);
     i++;
   }
-  
+
   while (j < right.size()) {
     result.push_back(right[j]);
     j++;
   }
-  
+
   return result;
+}
+
+vector<int> selectionSort(vector<int>& arr) {
+  for (int i = 0; i < arr.size() - 1; ++i) {
+    int min = i;
+    for (int j = i + 1; j < arr.size(); ++j) {
+      if (arr[min] > arr[j]) {
+        min = j;
+      }
+    }
+    if (min != i) {
+      // Swap arr[i] and arr[min]
+      int temp = arr[i];
+      arr[i] = arr[min];
+      arr[min] = temp;
+    }
+  }
+  return arr;
+}
+
+vector<int> insertionSort(const vector<int>& arr) {
+  for (int i = 1; i < arr.size(); ++i) {
+    int key = arr[i];
+    int j = i;
+    while (j > 0 && arr[j - 1] > key) {
+      arr[j] = arr[j - 1];
+      --j;
+    }
+    arr[j] = key;
+  }
+  return arr;
 }
 
 vector<int> quickSort(vector<int>& arr) {
