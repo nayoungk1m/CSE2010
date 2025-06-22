@@ -141,6 +141,30 @@ vector<int> Graph::depthFirstSearch(int s) {
   return result;
 }
 
+vector<int> Graph::breadthFirstSearch(int s) {
+  vector<bool> visited(nVertices, false);
+  queue<int> q;
+  vector<int> result;
+
+  q.push(s);
+  visited[s] = true;
+  while (!q.empty()) {
+    int u = q.front();
+    q.pop();
+    result.push_back(u);
+    cout << "visit " << u << " " << endl;
+  
+    vector<int> nbrs = getNeighbors(u);
+    for (const int v : nbrs) {
+      if (!visited[v]) {
+        visited[v] = true;
+        q.push(v);
+      }
+    }
+  }
+  return result;
+}
+
 bool Graph::topologicalSort(vector<int>& out) {
   out.clear();
   queue<int> q;
@@ -190,25 +214,39 @@ bool Graph::runDijstra(int s, int t, vector<int>& output) {
   pq.build(distance, nVertices);
   while (!pq.isEmpty()) {
     int u = pq.deleteMinimum();
-    int v, wgt;
-    for (int i = 0; i < nNeighbors[u]; ++i) {
-      tie(v, wgt) = neighbors[u][i];
-      if (distance[u] < (INT_MAX - wgt) && distance[u] + wgt < distance[u]) {
+    // int v, wgt;
+    // for (int i = 0; i < nNeighbors[u]; ++i) {
+    //   tie(v, wgt) = neighbors[u][i];
+    //   if (distance[u] < (INT_MAX - wgt) && distance[u] + wgt < distance[u]) {
+    //     distance[v] = distance[u] + wgt;
+    //     pq.decreaseKey(v, distance[v]);
+    //     predecessor[v] = u;
+    //   }
+    // }
+    for (const auto& [v, wgt] : neighbors[u]) {
+      if (distances[u] + wgt < distance[v]) {
         distance[v] = distance[u] + wgt;
-        pq.decreaseKey(v, distance[v]);
         predecessor[v] = u;
+        pq.decreaseKey(v, distance[v]);
       }
     }
   }
 
-  int u = t;
-  while (u != s) {
-    output.push_back(u);
-    u = predecessor[u];
+  // int u = t;
+  // while (u != s) {
+  //   output.push_back(u);
+  //   u = predecessor[u];
+  //   if (u < 0) {
+  //     output.clear();
+  //     return false;
+  //   }
+  // }
+  for (int u = t; u != s; u = predecessor[u]) {
     if (u < 0) {
       output.clear();
       return false;
     }
+    output.push_back(u);
   }
   output.push_back(s);
   reverse(output.begin(), output.end());
